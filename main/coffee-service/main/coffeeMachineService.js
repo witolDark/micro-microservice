@@ -1,8 +1,8 @@
-import {DrinkResponseDTO} from "../../shared/dto/drinkResponseDto.js"
+import {DrinkResponseDTO} from "./drinkResponseDto.js"
 import Drink from "./drinkModel.js"
 import Ingredient from "./ingredientModel.js"
-import {DrinkDTO} from "../../shared/dto/drinkDto.js"
-import {IngredientDTO} from "../../shared/dto/ingredientDto.js"
+import {DrinkDTO} from "./drinkDto.js"
+import {IngredientDTO} from "./ingredientDto.js"
 import DefaultDrinks from "./defaultDrinks.js"
 import DefaultIngredients from "./defaultIngredients.js"
 
@@ -43,6 +43,7 @@ class CoffeeMachineService {
 
     async buyDrink(user, drinkName, ingredients, amount) {
         let response = []
+        let totalPrice = 0
         for (let i = 0; i < Number(amount); i++) {
             let ingredientsTemp = []
             for (let j = 0; j < ingredients.length; j++) {
@@ -58,20 +59,25 @@ class CoffeeMachineService {
                 throw new Error("Could not find drink")
             }
 
+
             if (user.account >= drink.price) {
                 if (drink.amount <= 0) {
                     response.push("Drinks have ended")
                     break
                 }
+
+                user.account -= drink.price
+                totalPrice += drink.price
                 drink.amount--
                 await drink.save()
                 const boughtDrink = new DrinkDTO(drink)
                 response.push(new DrinkResponseDTO(user._id, boughtDrink, ingredientsTemp))
             } else {
-                throw new Error(`Not enough of money. Account: ${user.account} Price: ${drink.price}`)
+                response.push(`Not enough of money. Account: ${user.account} Price: ${drink.price}`)
+                break
             }
         }
-        await user.save()
+        response.push(totalPrice)
         return response
     }
 

@@ -1,5 +1,5 @@
 import User from "./userModel.js"
-import {UserDTO} from "../../shared/dto/userDto.js"
+import {UserDTO} from "./userDto.js"
 
 class UserService {
     async createDefaultUser() {
@@ -38,7 +38,16 @@ class UserService {
             body: JSON.stringify(body)
         })
 
-        return await request.json()
+        const requestJson = await request.json()
+
+        if (request.ok) {
+            console.log(Number(requestJson[requestJson.length - 1]))
+            console.log(typeof Number(requestJson[requestJson.length - 1]))
+            user.account -= Number(requestJson[requestJson.length - 1])
+            await user.save()
+        }
+
+        return requestJson
     }
 
     async getMenu() {
