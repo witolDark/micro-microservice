@@ -1,0 +1,5 @@
+/.env
+/node_modules/
+/main/admin-service/node_modules/
+/main/coffee-service/node_modules/
+/main/user-service/node_modules/

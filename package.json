@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "start:user": "node main/user-service/index.js",
+    "start:coffee": "node main/coffee-service/index.js",
+    "start:admin": "node main/admin-service/index.js",
+    "start:all": "concurrently \"npm run start:user\" \"npm run start:coffee\" \"npm run start:admin\""
+  },
+  "type": "module"
+}
